@@ -39,9 +39,10 @@ module GraphQL
         next unless type.respond_to?(:fields)
 
         type.fields.each do |_name, field|
-          field_type = extract_type(field.type)
+          base = field.respond_to?(:type_class) ? field.type_class : field
+          field_type = extract_type(base.type)
           type_attributes = GraphQL::Decorate::TypeAttributes.new(field_type)
-          field.extension(GraphQL::Decorate::FieldExtension) if type_attributes.decoratable?
+          base.extension(GraphQL::Decorate::FieldExtension) if type_attributes.decoratable?
         end
       end
     end
